@@ -37,8 +37,9 @@ module SeedMigration
         migration.migrated_on = DateTime.now
         begin
           migration.save!
-        rescue Exception => e
+        rescue => e
           puts e
+          raise
         end
         announce("#{klass}: migrated (#{runtime}s)")
       end
@@ -247,9 +248,9 @@ SeedMigration::Migrator.bootstrap(#{last_migration})
       end
 
       if Rails::VERSION::MAJOR == 3
-        model_creation_string = "#{instance.class}.create(#{JSON.parse(sorted_attributes.to_json).to_s}, :without_protection => true)"
+        model_creation_string = "#{instance.class}.create!(#{JSON.parse(sorted_attributes.to_json).to_s}, :without_protection => true)"
       elsif Rails::VERSION::MAJOR == 4
-        model_creation_string = "#{instance.class}.create(#{JSON.parse(sorted_attributes.to_json).to_s})"
+        model_creation_string = "#{instance.class}.create!(#{JSON.parse(sorted_attributes.to_json).to_s})"
       end
 
       # With pretty indents, please.
